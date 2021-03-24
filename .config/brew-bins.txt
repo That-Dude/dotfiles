@@ -1,0 +1,7 @@
+coreutils
+tmux
+ripgrep
+fzf
+hugo
+bat
+tree
