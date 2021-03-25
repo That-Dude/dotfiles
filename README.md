@@ -1,5 +1,40 @@
 ![banner.jpe](/static/banner.jpg)
 
+# That Dudes dotfiles for macOS
+
+This fork is a partial re-write of the dotfiles project.
+
+In essenece it allows you to setup a new or exisiting macOS installation just the way you would like it. With the config files and Apps that you would like installed.
+
+My version breaks from the original project in the following ways:
+
+* It works on the bash package that comes pre-installed with macOS
+* It prompts you for installation of packages that are not already installed on the system
+* It allows for comments in the package install txt files, these are displayed during install
+
+## How to install
+
+If you're happy with all of my settings you can just open a terminal and paste in the following line:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/That-Dude/dotfiles/main/setup)"
+```
+
+However, I strongly recommend that you fork this repo, then edit the following files:
+```bash
+.config/brew-bins.txt
+.config/brew-casks.txt
+```
+Then open setup and change the line:
+```bash
+githubrepo="That-Dude"
+```
+to match your github name before running the installer above, also with your username replaced.
+
+
+
+
+# Original text from project here...
 There is something fascinating about customizing your operating system through dotfiles. This repository is the collection of configurations that I learned over time and still use for my daily work.
 
 ***Recommended** reading about managing and sharing dotfiles elegently - [Setting up a Development Machine (Series of 3 parts)](https://www.kalkayan.io/posts/setting-up-a-development-machine-part-1/)*
