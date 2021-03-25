@@ -1,0 +1,23 @@
+#Microsoft Remote Desktop
+1295203466
+#Xee³
+639764244
+#MQTT Explorer
+1455214828
+#Ghostery Lite
+1436953057
+#The Unarchiver
+425424353
+#Adblock Plus
+1432731683
+#WireGuard
+1451685025
+#LanScan
+472226235
+#MindNode
+1289197285
+#CleanMyDrive 2
+523620159
+#Minimal Consent
+1514164630
+
