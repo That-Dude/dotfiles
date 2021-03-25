@@ -13,3 +13,13 @@ adobe-creative-cloud
 transmit
 carbon-copy-clonere
 vmware-fusion
+gas-mask
+fastrawviewer
+firefox
+alt-tab
+# vscodium is a fork of VScode without the tracking
+vscodium
+vnc-viewer
+bitwarden
+anydesk
+balenaetcher
