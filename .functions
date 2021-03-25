@@ -24,26 +24,7 @@
 
 # navigations for the 'to' functionality created below, this is a faster navi-
 # gate to directory
-declare -A navigations
+#declare -A navigations #doesn't work in bash 3, macos default
 
 # this section is specific to my system, change the below as a ["key"]="value"
 # pairs and add your navigations.
-navigations=(
-    # System locations
-    ["downloads"]="/Users/hades/Downloads"
-    # Coding folders locations
-    ["kalkayan"]="/Users/hades/Code/kalkayan"
-    ["code"]="/Users/hades/Code"
-    ["cpp"]="/Users/hades/Code/cpp"
-    ["else"]="/Users/hades/Code/else"
-    ["go"]="/Users/hades/Code/go"
-    ["react"]="/Users/hades/Code/react"
-)
-
-# function to navigate faster to already specified directories
-function to() { cd "${navigations[$1]}"; }
-
-# Load nvm to the shell
-function sonvm() {
-    [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"
-}

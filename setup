@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+#user variables
+githubrepo="That-Dude"
+binslist="$HOME/.config/brew-bins.txt"
+casklist="$HOME/.config/brew-casks.txt"
+macappstore="$HOME/.config/mac-appstore.txt"
+x="y"
 # MIT License
 #
 # Copyright (c) 2020 Manish Sahani
@@ -22,18 +28,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Brew Binaries - these are binaries that are available as brew formula. A list
-# of these formulas are stored in the bins.txt file under ~/.config/kalkayan
-# ~ Note ~ : this file is automatically updates with everytime brew installs or
-# removes a binary
-mapfile -t bins <  <(cat $HOME/.config/kalkayan/bins.txt)
+# Install brew.sh (system package manager) if already not installed
+# NB: Brew will install the xcode command line tools if required
+if ! brew -h 1>/dev/null; then
+    echo "- brew not found, installing..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    echo "- brew install complete"
+else
+    echo "- brew already installed"
+fi
 
-# Brew Casks - these are the casks that are available as brew formula. A list
-# of these casks are stored in the casks.txt under ~/.config/kalkayan folder.
-# ~ Note ~ : this file is automatically updates with everytime brew installs or
-# removes a casks
-mapfile -t casks < <(cat $HOME/.config/kalkayan/casks.txt)
-
+# Update brew to latest available version
+echo "- brew update"
+brew update
+echo "- brew update complete"
 
 # :-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-: #
 #                          /!\ Install dotfiles /!\                           #
@@ -55,7 +63,10 @@ DF_BRANCH="main"
 
 # Bring the dotfiles from hosted repository if not already present
 if [ ! -d "$HOME/.dotfiles" ]; then
-    /usr/bin/git clone --bare https://github.com/kalkayan/dotfiles.git $HOME/.dotfiles
+    echo "- .dotfiles does not exisit - pulling from repo: $githubrepo"
+    /usr/bin/git clone --bare https://github.com/$githubrepo/dotfiles.git $HOME/.dotfiles
+else
+    echo "- .dotfiles alrady exisit"
 fi
 
 # Reset the unstagged changes before updating (TODO: experiment with stash)
@@ -65,32 +76,21 @@ fi
 
 # Activate the profile for the current dev machine and Update the dotfiles with
 # remote repository
+echo "- checkout $DF_BRANCH"
 $DOTFILES checkout $DF_BRANCH
+echo "- pull origin $DF_BRANCH"
 $DOTFILES pull origin $DF_BRANCH
 
+# Brew Binaries - these are binaries that are available as brew formula. A list
+# of these formulas are stored in the bins.txt file under ~/.config
+# ~ Note ~ : this file is automatically updates with everytime brew installs or
+# removes a binary
+#mapfile -t bins <  <(cat $HOME/.config/bins.txt)
 
-# :-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-: #
-#                         /!\ Command Line tools  /!\                         #
-# :-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-: #
-#                                                                             #
-#  Install macOS SDK, headers, and build tools such as the compilers - LLVM,  #
-#  interpreters, and system package manager - Brew.sh.                        #
-#                                                                             #
-# :-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-: #
-
-# Install Xcode-select (xcode command line tools) is not already installed
-if ! xcode-select -p 1>/dev/null; then
-    xcode-select --install
-fi
-
-# Install brew.sh (system package manager) if already not installed
-if ! brew -h 1>/dev/null; then
-    echo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-fi
-
-# Update brew to latest available version
-brew update
-
+# Brew Casks - these are the casks that are available as brew formula. A list
+# of these casks are stored in the casks.txt under ~/.config/kalkayan folder.
+# ~ Note ~ : this file is automatically updates with everytime brew installs or
+# removes a casks
 
 # :-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-: #
 #                           /!\ Binaries and Casks /!\                        #
@@ -104,33 +104,64 @@ brew update
 export PATH="$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:$PATH"
 
 # Install binaries using Homebrew, iterate over bins array and install.
-for binary in "${bins[@]}"; do
-    # split the brew formula into binary name and version of installation and
-    # get the name of the binary (ex- php in php@7.4)
-    b=`echo $binary | cut -d \@ -f 1`
-    # check if the binary is already present, otherwise install
-    if ! brew list --formula | grep "$b" 1>/dev/null; then
-        brew install "$binary"
+
+echo "- Checking and installing brew bins from: $binslist"
+while IFS= read -r -u 3 line   # Read from file descriptor 3
+do
+    if [[ "$line" =~ \#.* ]];then
+        echo "- Comment: $line"
+    else
+        # split the brew formula into binary name and version of installation and
+        # get the name of the binary (ex- php in php@7.4)
+        b=`echo $line | cut -d \@ -f 1`
+        if ! brew list --formula | grep "$b" 1>/dev/null; then
+            read -n1 -p "Do you want to instal $line [y/n/q]" ip   # Read from whatever standard input happens to be
+            echo ""
+                if [ "$ip" = "q" ]
+            then
+                echo "Quitting..."
+                exit 1
+            fi 
+            if [ "$ip" = "y" ]
+            then
+            echo "- installing :$line"
+            brew install "$line"
+            fi 
+        else
+            echo "- already installed binary: $line"
+        fi
     fi
-done
+done 3< "$binslist"  # Supply filename for file descriptor 3
+
 
 # Install casks using Homebrew, iterate over casks array and install.
-for c in "${casks[@]}"; do
-    # first, check if the cask is present or not, if not install
-    if ! brew list --cask | grep "$c" 1>/dev/null; then
-        brew casks install "$c"
+echo "- Checking and installing brew casks from: $casklist"
+while IFS= read -r -u 3 line   # Read from file descriptor 3
+do
+    if [[ "$line" =~ \#.* ]];then
+        echo "- Comment: $line"
+    else
+        # split the brew formula into binary name and version of installation and
+        # get the name of the binary (ex- php in php@7.4)
+        b=`echo $line | cut -d \@ -f 1`
+        if ! brew list --cask | grep "$b" 1>/dev/null; then
+            read -n1 -p "Do you want to instal cask $line [y/n/q]" ip   # Read from whatever standard input happens to be
+            echo ""
+                if [ "$ip" = "q" ]
+            then
+                echo "Quitting..."
+                exit 1
+            fi 
+            if [ "$ip" = "y" ]
+            then
+            echo "- installing :$line"
+            brew install cask "$line"
+            fi 
+        else
+            echo "- already installed binary: $line"
+        fi
     fi
-done
-
-# Chanage the default shell to zsh installed by Homebrew (macos may ship with
-# older version, therefore update the zsh)
-BREW_PREFIX=$(brew --prefix)
-
-if ! fgrep -q "${BREW_PREFIX}/bin/zsh" /etc/shells; then
-  echo "${BREW_PREFIX}/bin/zsh" | sudo tee -a /etc/shells;
-  chsh -s "${BREW_PREFIX}/bin/zsh";
-fi
-
+done 3< "$casklist"  # Supply filename for file descriptor 3
 
 # :-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-: #
 #                           /!\ Post Installation /!\                         #
@@ -141,15 +172,8 @@ fi
 # :-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-: #
 
 # Post-Installation for Node Version Manager (NVM)
-if [[ " ${bins[@]} " =~ " nvm " ]]; then
-    [ ! -d ~/.nvm ] && mkdir ~/.nvm
-    # source the nvm.sh file to add nvm in path
-    [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"
-    # Install lts support for nodejs, yarn and update npm
-    nvm install --lts
-    npm install -g npm yarn
-fi
 
+echo "- brew cleanup"
 brew cleanup
 
 [ -f ~/.zshrc ] && source ~/.zshrc

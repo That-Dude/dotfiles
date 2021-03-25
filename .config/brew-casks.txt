@@ -1,2 +1,15 @@
 whatsapp
 vlc
+mark-text
+keka
+nextcloud
+clipy
+google-drive-file-stream
+royal-tsx
+macpass
+lulu
+knockknock
+adobe-creative-cloud
+transmit
+carbon-copy-clonere
+vmware-fusion
