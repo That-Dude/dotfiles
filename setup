@@ -5,7 +5,7 @@ githubrepo="That-Dude"
 binslist="$HOME/.config/brew-bins.txt"
 casklist="$HOME/.config/brew-casks.txt"
 macappstore="$HOME/.config/mac-appstore.txt"
-x="y"
+
 # MIT License
 #
 # Copyright (c) 2020 Manish Sahani
