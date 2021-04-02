@@ -23,3 +23,9 @@ vnc-viewer
 bitwarden
 anydesk
 balenaetcher
+avidemux
+sloth
+uninstallpkg
+zerotier-one
+platypus
+cyberduck
