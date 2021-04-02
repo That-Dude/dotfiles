@@ -1,31 +1,44 @@
+# Messaging Apps
 whatsapp
+
+# Video Apps
 vlc
-mark-text
+avidemux
+
+# Development Tools
+vscodium
+platypus
+
+# Systools
 keka
-nextcloud
 clipy
 google-drive-file-stream
-royal-tsx
-macpass
-lulu
-knockknock
-adobe-creative-cloud
 transmit
 carbon-copy-clonere
-vmware-fusion
 gas-mask
-fastrawviewer
-firefox
+vmware-fusion
 alt-tab
-# vscodium is a fork of VScode without the tracking
-vscodium
 vnc-viewer
-bitwarden
-anydesk
-balenaetcher
-avidemux
 sloth
 uninstallpkg
 zerotier-one
-platypus
+
+# Productivity
+nextcloud
+royal-tsx
+mark-text
+anydesk
+
+# Security
+macpass
+lulu
+knockknock
+bitwarden
+
+# Graphics Apps
+adobe-creative-cloud
+fastrawviewer
+
+# Web
+firefox
 cyberduck

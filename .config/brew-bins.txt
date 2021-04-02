@@ -1,21 +1,27 @@
 # Coreutils - The base UNIX commands, updated version
 coreutils
+
 # TMUX  - Terminal multiplexer
 tmux
-# Hugo - Static web page builder
-hugo
+
 # Bat - It's like CAT or More but supports formatting
 bat
+
 tree
 rclone
 parallel
 imagemagick
+
 # ExifTool - command line image EXIF data manipulation
 exiftool
+
 # JPEG-Archive - Command line image compressor
 jpeg-archive
+
 # Midnight Commander - Terminal-based visual file manager (has a bunch of deps)
 midnight-commander
+
 #A mas-cli - simple command line interface for the Mac App Store.
 mas
+
 #End of bins install list

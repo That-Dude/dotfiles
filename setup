@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-#user variables
-githubrepo="That-Dude"
-binslist="$HOME/.config/brew-bins.txt"
-casklist="$HOME/.config/brew-casks.txt"
-macappstore="$HOME/.config/mac-appstore.txt"
-
 # MIT License
 #
 # Copyright (c) 2020 Manish Sahani
@@ -27,6 +21,19 @@ macappstore="$HOME/.config/mac-appstore.txt"
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+#user variables
+githubrepo="That-Dude"
+binslist="$HOME/.config/brew-bins.txt"
+casklist="$HOME/.config/brew-casks.txt"
+macappstore="$HOME/.config/mac-appstore.txt"
+
+# Functions to set colours
+green () { printf "\e[32m\n"; }
+red () { printf "\e[31m\n"; }
+white () { printf "\\e[m\n"; }
+
+
 
 # Install brew.sh (system package manager) if already not installed
 # NB: Brew will install the xcode command line tools if required
@@ -104,19 +111,25 @@ $DOTFILES pull origin $DF_BRANCH
 export PATH="$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:$PATH"
 
 # Install binaries using Homebrew, iterate over bins array and install.
-
+green
 echo "- Checking and installing brew bins from: $binslist"
 while IFS= read -r -u 3 line   # Read from file descriptor 3
 do
-    if [[ "$line" =~ \#.* ]];then
-        echo "- Comment: $line"
+    if [[ ! $line =~ [^[:space:]] ]] ; then # Ignore blank lines
+        continue
+    fi
+    if [[ "$line" =~ \#.* ]];then # Print comment lines
+        white
+        printf "$line"
+        green
     else
         # split the brew formula into binary name and version of installation and
         # get the name of the binary (ex- php in php@7.4)
         b=`echo $line | cut -d \@ -f 1`
         if ! brew list --formula | grep "$b" 1>/dev/null; then
+            red
             read -n1 -p "Do you want to instal $line [y/n/q]" ip   # Read from whatever standard input happens to be
-            echo ""
+            green
                 if [ "$ip" = "q" ]
             then
                 echo "Quitting..."
@@ -138,15 +151,21 @@ done 3< "$binslist"  # Supply filename for file descriptor 3
 echo "- Checking and installing brew casks from: $casklist"
 while IFS= read -r -u 3 line   # Read from file descriptor 3
 do
+    if [[ ! $line =~ [^[:space:]] ]] ; then
+        continue
+    fi
     if [[ "$line" =~ \#.* ]];then
-        echo "- Comment: $line"
+        white
+        printf "$line"
+        green
     else
         # split the brew formula into binary name and version of installation and
         # get the name of the binary (ex- php in php@7.4)
         b=`echo $line | cut -d \@ -f 1`
         if ! brew list --cask | grep "$b" 1>/dev/null; then
+            red
             read -n1 -p "Do you want to instal cask $line [y/n/q]" ip   # Read from whatever standard input happens to be
-            echo ""
+            green
                 if [ "$ip" = "q" ]
             then
                 echo "Quitting..."
@@ -171,9 +190,9 @@ done 3< "$casklist"  # Supply filename for file descriptor 3
 #                                                                             #
 # :-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-: #
 
-# Post-Installation for Node Version Manager (NVM)
-
+# Post-Installation
+printf "\nPost install section\n\n"
 echo "- brew cleanup"
 brew cleanup
-
+echo "- Sourcing .zshrc"
 [ -f ~/.zshrc ] && source ~/.zshrc
