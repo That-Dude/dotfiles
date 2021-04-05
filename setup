@@ -33,7 +33,28 @@ green () { printf "\e[32m\n"; }
 red () { printf "\e[31m\n"; }
 white () { printf "\\e[m\n"; }
 
+#check if setup already existis
+if [[ -e "$HOME/setup" ]]; then
+    echo "setup already exsits in home folder"
+    # Now compare it to the version availibe on git
+    rm "$HOME/setup2" 2>/dev/null
+    curl -o "$HOME/setup2" "https://raw.githubusercontent.com/$githubrepo/dotfiles/main/setup"
+    if cmp --silent -- "$HOME/setup" "$HOME/setup2"; then
+        echo "files contents are identical, continue running this script..."
+        rm "$HOME/setup2"
+    else
+        echo "files differ, we should run the new script instead of this one"
+        echo "Running the new version..."
+        chmod +x "$HOME/setup2"
+        "$HOME/setup2"
+        # Now exit this old instance
+        rm "$HOME/setup2"
+        exit 1
 
+    fi
+else
+    echo "setup does not exist, therefore this script is being run via curl on a first time install...continue"
+fi
 
 # Install brew.sh (system package manager) if already not installed
 # NB: Brew will install the xcode command line tools if required
