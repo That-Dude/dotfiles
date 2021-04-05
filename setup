@@ -33,24 +33,25 @@ green () { printf "\e[32m\n"; }
 red () { printf "\e[31m\n"; }
 white () { printf "\\e[m\n"; }
 
-#check if setup already existis
+# Make sure we're runing the latest version of this setup script  by checking the github repo
+# Check if setup script already existis in home folder
 if [[ -e "$HOME/setup" ]]; then
     echo "setup already exsits in home folder"
-    # Now compare it to the version availibe on git
+    echo "Getting latest version of this script from github..."
+
     rm "$HOME/setup2" 2>/dev/null
     curl -o "$HOME/setup2" "https://raw.githubusercontent.com/$githubrepo/dotfiles/main/setup"
+    
     if cmp --silent -- "$HOME/setup" "$HOME/setup2"; then
-        echo "files contents are identical, continue running this script..."
+        echo "Everything is already up-to-date"
         rm "$HOME/setup2"
     else
-        echo "files differ, we should run the new script instead of this one"
-        echo "Running the new version..."
+        echo "The gitbub version is newer so I'm  using that version instead..."
         chmod +x "$HOME/setup2"
         "$HOME/setup2"
-        # Now exit this old instance
+        # Now clean up and exit this old script instance
         rm "$HOME/setup2"
         exit 1
-
     fi
 else
     echo "setup does not exist, therefore this script is being run via curl on a first time install...continue"
@@ -64,6 +65,8 @@ if ! brew -h 1>/dev/null; then
     echo "- brew install complete"
 else
     echo "- brew already installed"
+    echo "- upgrading brew..."
+    brew  upgrade
 fi
 
 # Update brew to latest available version
