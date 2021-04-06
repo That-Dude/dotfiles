@@ -6,8 +6,12 @@ vlc
 avidemux
 
 # Development Tools
+# VScodium is VSCode without the spyware
 vscodium
+# Platypus creates pretty apps from scripts
 platypus
+# Micro is a much improved alterative to vi and nano
+micro
 
 # Systools
 keka
